@@ -207,11 +207,10 @@ export default {
   data() {
     return {
       isOn1: false,
-      on2: false,
+      isOn2: false,
       off2: false,
       switch1: [],
       switch2: [],
-      isOn2: false,
       hierarchy1: false,
       opened2: [],
       opened: [],
@@ -243,24 +242,29 @@ export default {
       }
     },
     switchSeason(season) {
-      console.log("button before", this.isOn1);
       if (!this.isOn1) {
-        console.log('jibai');
         this.isOn1 = true;
         season.seasons.forEach((element) => {
-          this.switch1.push(element.season_id);
+          if (!this.switch1.includes(element.season_id)) {
+            this.switch1.push(element.season_id);
+            this.switch2 = [];
+          }
         });
-        console.log('jibai2',this.switch1);
       } else {
         this.isOn1 = false;
       }
-      console.log("button after", this.isOn1);
     },
     switchEpisodes(episode) {
-      if (!this.switch1.includes(episode.season_id)) {
-        episode.episodes.forEach((element) => {
-          this.switch2.push(element.episode_id);
-        });
+      if (!this.isOn2) {
+        if (!this.switch1.includes(episode.season_id)) {
+          episode.episodes.forEach((element) => {
+            if (!this.switch2.includes(element.season_id)) {
+              this.switch2.push(element.episode_id);
+            }
+          });
+        }
+      } else {
+        this.isOn2 = false;
       }
     },
   },
