@@ -5,7 +5,7 @@
         <div>
           <img src="../public/default.jpg" />
         </div>
-        <div class="button">
+        <div class="button" @click="$router.push({ path: 'Inventory' })">
           <span class="btn_content"
             ><i class="icon"><img
               src="../public/Vector.svg"

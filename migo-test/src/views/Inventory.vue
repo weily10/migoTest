@@ -6,6 +6,7 @@
         type="text"
         placeholder="Search for titles in inventory"
         class="input-class"
+        v-model="search"
       />
     </div>
     <section>
@@ -37,7 +38,7 @@
           </tr>
         </thead>
         <tbody>
-          <template v-for="(item, index) in titles">
+          <template v-for="(item, index) in filteredList">
             <tr @click="toggle(item.title_id)" :key="index">
               <td style="width: 10px">
                 <i v-show="item.content_type === 'Series'">
@@ -216,8 +217,10 @@ export default {
       opened: [],
       titles: [],
       switch3: [],
+      search: "",
     };
   },
+
   methods: {
     hasValue(value) {
       return !value || value === 0 ? "--" : value;
@@ -256,6 +259,7 @@ export default {
     },
     switchEpisodes(episode) {
       if (!this.isOn2) {
+        this.isOn2 = true;
         if (!this.switch1.includes(episode.season_id)) {
           episode.episodes.forEach((element) => {
             if (!this.switch2.includes(element.season_id)) {
@@ -266,6 +270,19 @@ export default {
       } else {
         this.isOn2 = false;
       }
+    },
+  },
+
+  computed: {
+    filteredList() {
+      return this.titles.filter((item) => {
+        const name =
+          item.title_name.toLowerCase().indexOf(this.search.toLowerCase()) > -1;
+
+
+
+        return name
+      });
     },
   },
   mounted() {
@@ -363,9 +380,26 @@ th {
 }
 
 .input-class {
+  background-image: url(../../public/search.svg);
+  background-size: 17px 17px;
+  background-position: 10px center;
+  background-repeat: no-repeat;
+  border: 1px solid #ccc;
+  padding: 10px 5px 10px 20px;
+  text-indent: 20px;
+
+  -webkit-transition: all 0.1s;
+  -moz-transition: all 0.2s;
+  transition: all 0.01s;
+
   width: 419px;
   height: 40px;
   border-radius: 4px;
+}
+
+.input-class:focus {
+  background-position: -50px center;
+  text-indent: 0;
 }
 .switch {
   position: relative;
