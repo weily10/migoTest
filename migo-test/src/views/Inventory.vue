@@ -13,8 +13,8 @@
       <table class="table-1">
         <thead class="header-1">
           <tr>
-            <th></th>
-            <th align="left" style="width: 50px">
+            <th style="width: 8px"></th>
+            <th align="left" style="width: 80px">
               <span>ID</span>
             </th>
             <th align="left">
@@ -38,9 +38,9 @@
           </tr>
         </thead>
         <tbody>
-          <template v-for="(item, index) in filteredList">
+          <template v-for="(item, index) in filteredItems">
             <tr @click="toggle(item.title_id)" :key="index">
-              <td style="width: 10px">
+              <td style="width: 10px; padding: 0 10px 0 16px">
                 <i v-show="item.content_type === 'Series'">
                   <img
                     v-show="opened.includes(item.title_id)"
@@ -121,7 +121,7 @@
                       alt=""
                     />
                   </i>
-                  <span style="padding-right: 20px">
+                  <span>
                     {{ season.season_id }}
                   </span>
                 </td>
@@ -163,7 +163,7 @@
                   "
                 >
                   <td></td>
-                  <td class="text-start" style="padding-left: 20px">
+                  <td class="text-start" align="right">
                     {{ episode.episode_id }}
                   </td>
                   <td
@@ -207,6 +207,7 @@ import axios from "axios";
 export default {
   data() {
     return {
+      filteredItems: [],
       isOn1: false,
       isOn2: false,
       off2: false,
@@ -272,25 +273,37 @@ export default {
       }
     },
   },
+  watch: {
+    search: async function (v) {
+      await axios
+        .get("titles.json")
+        .then((res) => {
+          this.titles = res.data;
+        })
+        .catch((err) => console.log(err));
 
-  computed: {
-    filteredList() {
-      return this.titles.filter((item) => {
-        const name =
-          item.title_name.toLowerCase().indexOf(this.search.toLowerCase()) > -1;
+      this.filteredItems = this.titles.filter((item) => {
 
-
-
-        return name
+       
+        return (
+          item.title_name.toLowerCase().match(v.toLowerCase())
+        );
       });
+      // return item.title_name.toLowerCase().match(v.toLowerCase());
+      if (this.filteredItems.length === 0) {
+        await axios.get("titles.json").then((res) => {
+          this.filteredItems = res.data;
+        });
+      }
     },
   },
+
   mounted() {
     axios
       .get("titles.json")
       .then((res) => {
-        this.titles = res.data;
-        console.log(this.titles);
+        this.filteredItems = res.data;
+        console.log(this.filteredItems);
       })
       .catch((err) => console.log(err));
   },
@@ -323,7 +336,6 @@ export default {
   line-height: 14px;
 }
 .text-start-1 {
-  width: 96px;
   font-weight: 400;
   font-size: 12px;
   line-height: 14px;
@@ -339,9 +351,7 @@ export default {
   font-weight: 600;
   padding-left: 20px;
 }
-td {
-  padding: 0 12px 0 12px;
-}
+
 table {
   border-collapse: collapse;
   border: thin solid rgba(0, 0, 0, 0.12);
