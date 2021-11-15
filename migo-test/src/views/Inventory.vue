@@ -246,30 +246,28 @@ export default {
       }
     },
     switchSeason(season) {
-      if (!this.isOn1) {
-        this.isOn1 = true;
+      // if(!this.switch3.includes(season.title_id)){
+      //   this.switch3.push(season.title_id);
+      // }
+
+      console.log("SEASON", this.switch3);
+      if (!this.switch3.includes(season.title_id)) {
+        console.log("tem", this.switch3);
         season.seasons.forEach((element) => {
-          if (!this.switch1.includes(element.season_id)) {
-            this.switch1.push(element.season_id);
-            this.switch2 = [];
-          }
+          this.switch1.push(element.season_id);
+          // if (!this.switch1.includes(element.season_id)) {
+          //   this.switch1.push(element.season_id);
+          //   this.switch2 = [];
+          // }
         });
-      } else {
-        this.isOn1 = false;
       }
     },
-    switchEpisodes(episode) {
-      if (!this.isOn2) {
-        this.isOn2 = true;
-        if (!this.switch1.includes(episode.season_id)) {
-          episode.episodes.forEach((element) => {
-            if (!this.switch2.includes(element.season_id)) {
-              this.switch2.push(element.episode_id);
-            }
-          });
-        }
-      } else {
-        this.isOn2 = false;
+
+    switchEpisodes(season) {
+      if (!this.switch1.includes(season.season_id)) {
+        season.episodes.forEach((element) => {
+          this.switch2.push(element.episode_id);
+        });
       }
     },
   },
@@ -283,13 +281,9 @@ export default {
         .catch((err) => console.log(err));
 
       this.filteredItems = this.titles.filter((item) => {
-
-       
-        return (
-          item.title_name.toLowerCase().match(v.toLowerCase())
-        );
+        return item.title_name.toLowerCase().match(v.toLowerCase());
       });
-      // return item.title_name.toLowerCase().match(v.toLowerCase());
+
       if (this.filteredItems.length === 0) {
         await axios.get("titles.json").then((res) => {
           this.filteredItems = res.data;
@@ -303,7 +297,7 @@ export default {
       .get("titles.json")
       .then((res) => {
         this.filteredItems = res.data;
-        console.log(this.filteredItems);
+        console.log(res.data);
       })
       .catch((err) => console.log(err));
   },
